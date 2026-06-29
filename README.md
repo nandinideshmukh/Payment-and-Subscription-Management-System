@@ -203,6 +203,6 @@ Defined in [services/renewal_cron.py](services/renewal_cron.py)
 
 ## Notes
 
-- The notification service currently logs emails in test mode unless SMTP credentials are configured.
+- The notification service can logs emails in test mode as well as real mode unless SMTP credentials are configured.
 - Most endpoints depend on application state such as the database, Razorpay client, and scheduler instance.
 - The system is designed for subscription renewals, recurring billing, and payment lifecycle management.
