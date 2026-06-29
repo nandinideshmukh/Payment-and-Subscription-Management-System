@@ -1,6 +1,6 @@
-# RubixKube
+# Description
 
-RubixKube is a FastAPI-based subscription and payment system integrated with Razorpay. It handles payment order creation, payment verification, webhook processing, recurring subscriptions, renewal automation, and notification emails.
+FastAPI-based subscription and payment system integrated with Razorpay. It handles payment order creation, payment verification, webhook processing, recurring subscriptions, renewal automation, and notification emails.
 
 ## Project Structure
 
