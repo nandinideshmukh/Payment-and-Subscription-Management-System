@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RubixKube - Subscription Dashboard</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0b0b12;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(124, 58, 237, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 50%, rgba(124, 58, 237, 0.04) 0%, transparent 60%);
+    }
+
+    .container {
+      background: #11111a;
+      border-radius: 28px;
+      padding: 48px 44px;
+      width: 100%;
+      max-width: 980px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #7c3aed, #8b5cf6, #7c3aed, transparent);
+      opacity: 0.5;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 16px;
+      color: white;
+    }
+
+    .logo-text {
+      font-size: 22px;
+      font-weight: 800;
+      color: #f1f5f9;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text span {
+      color: #7c3aed;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #f1f5f9;
+      letter-spacing: -0.3px;
+    }
+
+    .header .user-badge {
+      background: rgba(124, 58, 237, 0.15);
+      color: #8b5cf6;
+      padding: 6px 16px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid rgba(124, 58, 237, 0.2);
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 28px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 18px;
+    }
+
+    /* ---- User ID input ---- */
+    .user-input-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .field {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s;
+      background: rgba(255, 255, 255, 0.03);
+      color: #f1f5f9;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .field input::placeholder {
+      color: #475569;
+    }
+
+    .field input:focus {
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-secondary {
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.25s;
+      white-space: nowrap;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #f1f5f9;
+    }
+
+    .btn-secondary.primary {
+      background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+      color: white;
+      border: none;
+    }
+
+    .btn-secondary.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+    }
+
+    .btn-secondary.danger {
+      background: rgba(239, 68, 68, 0.12);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.15);
+    }
+
+    .btn-secondary.danger:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    /* ---- Subscription Status Card ---- */
+    .subscription-card {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .subscription-card .status-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .subscription-card .status-row .plan-label {
+      font-weight: 500;
+      font-size: 14px;
+      color: #94a3b8;
+    }
+
+    .subscription-card .status-row .plan-name {
+      font-weight: 700;
+      font-size: 18px;
+      color: #f1f5f9;
+      text-transform: capitalize;
+    }
+
+    .subscription-card .status-badge {
+      padding: 4px 14px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-badge.active {
+      background: rgba(34, 197, 94, 0.12);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.15);
+    }
+
+    .status-badge.pending {
+      background: rgba(251, 191, 36, 0.12);
+      color: #fbbf24;
+      border: 1px solid rgba(251, 191, 36, 0.15);
+    }
+
+    .status-badge.expired {
+      background: rgba(239, 68, 68, 0.12);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.15);
+    }
+
+    .status-badge.cancelled {
+      background: rgba(255, 255, 255, 0.04);
+      color: #94a3b8;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .subscription-card .sub-id {
+      margin-left: auto;
+      font-size: 12px;
+      color: #475569;
+      font-family: monospace;
+    }
+
+    .subscription-card .sub-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .subscription-card .sub-detail-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .subscription-card .sub-detail-item .label {
+      font-size: 11px;
+      color: #475569;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .subscription-card .sub-detail-item .value {
+      font-size: 15px;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-top: 3px;
+    }
+
+    .subscription-card .sub-detail-item .value.danger {
+      color: #f87171;
+    }
+
+    .subscription-card .sub-detail-item .value.success {
+      color: #4ade80;
+    }
+
+    .subscription-card .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      flex-wrap: wrap;
+    }
+
+    .subscription-card .action-buttons .btn-sm {
+      padding: 8px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-sm.renew {
+      background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+      color: white;
+    }
+
+    .btn-sm.renew:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+    }
+
+    .btn-sm.cancel {
+      background: rgba(239, 68, 68, 0.1);
+      color: #f87171;
+    }
+
+    .btn-sm.cancel:hover {
+      background: rgba(239, 68, 68, 0.18);
+    }
+
+    .btn-sm.refresh {
+      background: rgba(255, 255, 255, 0.04);
+      color: #94a3b8;
+    }
+
+    .btn-sm.refresh:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* ---- Plan cards grid ---- */
+    .plans-section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 14px;
+      letter-spacing: 0.3px;
+    }
+
+    .plans-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 640px) {
+      .plans-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .plan-card {
+      border: 1.5px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 24px 22px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    .plan-card:hover {
+      border-color: rgba(124, 58, 237, 0.25);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .plan-card.selected {
+      border-color: #7c3aed;
+      background: rgba(124, 58, 237, 0.06);
+      box-shadow: 0 8px 30px rgba(124, 58, 237, 0.08);
+    }
+
+    .plan-card.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .plan-card.disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .plan-card .current-plan-badge {
+      position: absolute;
+      top: -9px;
+      right: 16px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 14px;
+      border-radius: 99px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .plan-card .popular-badge {
+      position: absolute;
+      top: -9px;
+      right: 16px;
+      background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 14px;
+      border-radius: 99px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .plan-card .plan-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 4px;
+    }
+
+    .plan-card .plan-desc {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 14px;
+    }
+
+    .plan-card .plan-price {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    .plan-card .plan-price .amount {
+      font-size: 34px;
+      font-weight: 800;
+      color: #f1f5f9;
+    }
+
+    .plan-card .plan-price .currency {
+      font-size: 18px;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+
+    .plan-card .plan-price .period {
+      font-size: 14px;
+      color: #475569;
+      font-weight: 500;
+    }
+
+    .plan-card .plan-features {
+      list-style: none;
+      padding: 0;
+      margin: 14px 0 0 0;
+    }
+
+    .plan-card .plan-features li {
+      font-size: 13px;
+      color: #94a3b8;
+      padding: 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .plan-card .plan-features li::before {
+      content: "✓";
+      color: #7c3aed;
+      font-weight: 700;
+      font-size: 14px;
+      background: rgba(124, 58, 237, 0.1);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .plan-card .check-mark {
+      display: none;
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+      border-radius: 50%;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 28px;
+    }
+
+    .plan-card.selected .check-mark {
+      display: block;
+    }
+
+    /* ---- Pay button ---- */
+    .pay-section {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pay-btn {
+      flex: 1;
+      min-width: 200px;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .pay-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(124, 58, 237, 0.4);
+    }
+
+    .pay-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .pay-btn .spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 2.5px solid rgba(255, 255, 255, 0.2);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    .pay-btn.loading .spinner {
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .pay-btn.loading .btn-text {
+      opacity: 0.7;
+    }
+
+    /* ---- Status box ---- */
+    .status {
+      margin-top: 16px;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .status.success {
+      background: rgba(34, 197, 94, 0.08);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.12);
+      display: block;
+    }
+
+    .status.error {
+      background: rgba(239, 68, 68, 0.08);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.12);
+      display: block;
+    }
+
+    .status.info {
+      background: rgba(124, 58, 237, 0.08);
+      color: #8b5cf6;
+      border: 1px solid rgba(124, 58, 237, 0.12);
+      display: block;
+    }
+
+    .status .status-icon {
+      margin-right: 8px;
+    }
+
+    /* ---- Log ---- */
+    .log-section {
+      margin-top: 28px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 18px;
+    }
+
+    .log-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .log-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .log-clear {
+      background: none;
+      border: none;
+      color: #475569;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: color 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .log-clear:hover {
+      color: #94a3b8;
+    }
+
+    .log {
+      background: #08080e;
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-size: 12.5px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: #475569;
+      max-height: 200px;
+      overflow-y: auto;
+      line-height: 2;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .log::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .log::-webkit-scrollbar-track {
+      background: #08080e;
+      border-radius: 99px;
+    }
+
+    .log::-webkit-scrollbar-thumb {
+      background: #7c3aed;
+      border-radius: 99px;
+    }
+
+    .log .log-ok {
+      color: #4ade80;
+    }
+
+    .log .log-err {
+      color: #f87171;
+    }
+
+    .log .log-info {
+      color: #60a5fa;
+    }
+
+    .log .log-warn {
+      color: #fbbf24;
+    }
+
+    /* ---- No subscription ---- */
+    .no-subscription {
+      text-align: center;
+      padding: 48px 20px;
+      color: #94a3b8;
+    }
+
+    .no-subscription .icon {
+      font-size: 56px;
+      margin-bottom: 14px;
+      opacity: 0.5;
+    }
+
+    .no-subscription h3 {
+      color: #e2e8f0;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .no-subscription p {
+      font-size: 14px;
+    }
+
+    /* ---- Scheduler Controls ---- */
+    .scheduler-section {
+      margin-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 18px;
+    }
+
+    .scheduler-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .scheduler-status {
+      font-size: 11px !important;
+      padding: 2px 12px !important;
+    }
+
+    .scheduler-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .control-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-sm.trigger {
+      background: rgba(124, 58, 237, 0.12);
+      color: #8b5cf6;
+      border: 1px solid rgba(124, 58, 237, 0.15);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-sm.trigger:hover {
+      background: rgba(124, 58, 237, 0.2);
+    }
+
+    .btn-sm.trigger:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .scheduler-jobs {
+      background: rgba(255, 255, 255, 0.015);
+      border-radius: 8px;
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .scheduler-jobs::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .scheduler-jobs::-webkit-scrollbar-thumb {
+      background: #7c3aed;
+      border-radius: 99px;
+    }
+
+    .job-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 12px;
+      color: #94a3b8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.025);
+    }
+
+    .job-item:last-child {
+      border-bottom: none;
+    }
+
+    .job-item .job-name {
+      color: #e2e8f0;
+      font-weight: 500;
+    }
+
+    .job-item .job-time {
+      color: #475569;
+      font-size: 11px;
+    }
+
+    .job-item .job-status {
+      font-size: 11px;
+    }
+
+    .job-item .job-status.active {
+      color: #4ade80;
+    }
+
+    .job-item .job-status.paused {
+      color: #fbbf24;
+    }
+
+    /* ---- Developer Mode Toggle ---- */
+    .dev-mode-toggle {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .dev-mode-toggle .dev-status {
+      font-size: 12px;
+      color: #475569;
+    }
+
+    .dev-mode-toggle .dev-status.on {
+      color: #4ade80;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <div class="logo">
+          <div class="logo-icon">R</div>
+          <div class="logo-text">Rubix<span>Kube</span></div>
+        </div>
+        <h1>Dashboard</h1>
+      </div>
+      <span class="user-badge">👤 <span id="displayUserId">usr_test001</span></span>
+    </div>
+    <p class="subtitle">View and manage your subscription plan</p>
+
+    <!-- Developer Mode Toggle -->
+    <div class="dev-mode-toggle">
+      <button class="btn-secondary" onclick="toggleDebugMode()">
+        🔧 Developer Mode
+      </button>
+      <span id="debugModeStatus" class="dev-status">Off</span>
+    </div>
+
+    <!-- User ID input -->
+    <div class="user-input-row">
+      <div class="field">
+        <label>User ID</label>
+        <input type="text" id="userId" value="usr_test001" placeholder="Enter your user ID" />
+      </div>
+      <button class="btn-secondary primary" onclick="loadSubscription()">
+        🔄 Load Subscription
+      </button>
+    </div>
+
+    <!-- Subscription Status Card -->
+    <div id="subscriptionCard" style="display: none;">
+      <div class="subscription-card">
+        <div class="status-row">
+          <span class="plan-label">Current Plan:</span>
+          <span class="plan-name" id="subPlanName">Starter</span>
+          <span class="status-badge" id="subStatusBadge">Active</span>
+          <span class="sub-id" id="subId">sub_xxx</span>
+        </div>
+        <div class="sub-details">
+          <div class="sub-detail-item">
+            <span class="label">Price</span>
+            <span class="value" id="subPrice">₹299/month</span>
+          </div>
+          <div class="sub-detail-item">
+            <span class="label">Start Date</span>
+            <span class="value" id="subStartDate">—</span>
+          </div>
+          <div class="sub-detail-item">
+            <span class="label">End Date</span>
+            <span class="value" id="subEndDate">—</span>
+          </div>
+          <div class="sub-detail-item">
+            <span class="label">Next Billing</span>
+            <span class="value" id="subNextBilling">—</span>
+          </div>
+          <div class="sub-detail-item">
+            <span class="label">Last Payment</span>
+            <span class="value" id="subLastPayment">—</span>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-sm renew" onclick="renewSubscription()">🔄 Renew Now</button>
+          <button class="btn-sm cancel" onclick="cancelSubscription()">✕ Cancel</button>
+          <button class="btn-sm refresh" onclick="loadSubscription()">⟳ Refresh</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Subscription -->
+    <div id="noSubscription" style="display: none;">
+      <div class="no-subscription">
+        <div class="icon">📭</div>
+        <h3>No Active Subscription</h3>
+        <p>Select a plan below to get started.</p>
+      </div>
+    </div>
+
+    <!-- Plan cards -->
+    <div style="margin-top: 8px;">
+      <div class="plans-section-title">⬆️ Upgrade / Change Plan</div>
+      <div class="plans-grid" id="planList">
+
+        <!-- Starter Plan -->
+        <div class="plan-card" data-plan-id="plan_starter" data-amount="29900" onclick="selectPlan(this)">
+          <div class="check-mark">✓</div>
+          <div class="plan-name">Starter</div>
+          <div class="plan-desc">Perfect for getting started</div>
+          <div class="plan-price">
+            <span class="currency">₹</span>
+            <span class="amount">299</span>
+            <span class="period">/month</span>
+          </div>
+          <ul class="plan-features">
+            <li>Basic analytics</li>
+            <li>5 team members</li>
+            <li>10GB storage</li>
+            <li>Email support</li>
+          </ul>
+        </div>
+
+        <!-- Professional Plan -->
+        <div class="plan-card" data-plan-id="plan_professional" data-amount="99900" onclick="selectPlan(this)">
+          <span class="popular-badge">⭐ Popular</span>
+          <div class="check-mark">✓</div>
+          <div class="plan-name">Professional</div>
+          <div class="plan-desc">Full power for growing teams</div>
+          <div class="plan-price">
+            <span class="currency">₹</span>
+            <span class="amount">999</span>
+            <span class="period">/month</span>
+          </div>
+          <ul class="plan-features">
+            <li>Advanced analytics</li>
+            <li>Unlimited team members</li>
+            <li>100GB storage</li>
+            <li>Priority support</li>
+            <li>API access</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Pay button -->
+    <div class="pay-section">
+      <button class="pay-btn" id="payBtn" onclick="startPayment()" disabled>
+        <span class="spinner"></span>
+        <span class="btn-text">Select a plan to continue</span>
+      </button>
+    </div>
+
+    <!-- Status -->
+    <div class="status" id="statusBox"></div>
+
+    <!-- Log -->
+    <div class="log-section">
+      <div class="log-header">
+        <span class="log-title">📋 Activity Log</span>
+        <button class="log-clear" onclick="clearLog()">Clear</button>
+      </div>
+      <div class="log" id="log">▶️ Enter a User ID and click "Load Subscription" to view details.<br /></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCHEDULER CONTROLS                                            -->
+    <!-- ============================================================ -->
+    <div class="scheduler-section">
+      <div class="scheduler-header">
+        <span class="log-title">⏰ Scheduler Controls</span>
+        <span id="schedulerStatus" class="scheduler-status status-badge active">Running</span>
+      </div>
+
+      <div class="scheduler-controls">
+        <div class="control-group">
+          <button class="btn-sm trigger" onclick="triggerRenewals()">🔄 Trigger Renewals</button>
+          <button class="btn-sm trigger" onclick="triggerExpiry()">⏰ Check Expiry</button>
+          <button class="btn-sm trigger" onclick="triggerReminders()">📧 Send Reminders</button>
+        </div>
+        <div class="control-group" style="margin-top: 8px;">
+          <button class="btn-sm refresh" onclick="loadSchedulerStatus()">⟳ Refresh Status</button>
+          <button class="btn-sm cancel" onclick="pauseScheduler()">⏸ Pause</button>
+          <button class="btn-sm renew" onclick="resumeScheduler()">▶ Resume</button>
+        </div>
+      </div>
+
+      <div id="schedulerJobs" class="scheduler-jobs">
+        <div class="job-item">
+          <span class="job-name">Loading jobs...</span>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- WEBHOOK TESTING                                               -->
+      <!-- ============================================================ -->
+      <div class="scheduler-section" style="margin-top: 16px;">
+        <div class="scheduler-header">
+          <span class="log-title">🔗 Webhook Tester</span>
+          <span id="webhookStatus" class="scheduler-status status-badge active">Ready</span>
+        </div>
+
+        <div class="scheduler-controls">
+          <div class="control-group">
+            <button class="btn-sm trigger" onclick="testWebhookDedup()">🧪 Test Deduplication</button>
+            <button class="btn-sm trigger" onclick="testWebhookNoId()">🚫 Test Missing ID</button>
+            <button class="btn-sm trigger" onclick="checkWebhookDuplicates()">📊 Check Duplicates</button>
+          </div>
+          <div class="control-group" style="margin-top: 8px;">
+            <button class="btn-sm refresh" onclick="clearWebhookEvents()">🗑️ Clear Test Events</button>
+            <button class="btn-sm renew" onclick="viewWebhookLogs()">📋 View Logs</button>
+          </div>
+        </div>
+
+        <!-- Webhook Test Results -->
+        <div id="webhookResults" style="margin-top: 10px; display: none;">
+          <div
+            style="background: rgba(255,255,255,0.02); border-radius: 8px; padding: 12px 16px; border: 1px solid rgba(255,255,255,0.05);">
+            <div id="webhookResultContent"
+              style="font-size: 13px; color: #94a3b8; font-family: monospace; max-height: 200px; overflow-y: auto;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <script>
+    const BASE_URL = "http://localhost:8000"
+    const RAZORPAY_KEY = "your_razorpay_key_id"
+
+    let selectedPlan = null
+    let currentSubscription = null
+
+    let debugMode = false
+
+    function toggleDebugMode() {
+      debugMode = !debugMode
+      const statusEl = document.getElementById("debugModeStatus")
+      statusEl.textContent = debugMode ? "On" : "Off"
+      statusEl.className = "dev-status" + (debugMode ? " on" : "")
+      log(`Developer mode ${debugMode ? 'enabled' : 'disabled'}`, "info")
+    }
+
+    // ============================================================
+    // WEBHOOK TESTING FUNCTIONS
+    // ============================================================
+
+    // ============================================================
+    // WEBHOOK TESTING FUNCTIONS (FIXED)
+    // ============================================================
+
+    async function testWebhookDedup() {
+      log(`→ Testing webhook deduplication...`, "info")
+      setStatus("Testing webhook deduplication...", "info")
+
+      const statusEl = document.getElementById("webhookStatus")
+      statusEl.textContent = "Testing..."
+      statusEl.className = "scheduler-status status-badge pending"
+
+      const resultsDiv = document.getElementById("webhookResults")
+      resultsDiv.style.display = "block"
+      const contentDiv = document.getElementById("webhookResultContent")
+
+      let results = []
+      let allPassed = true
+
+      try {
+        // Test 1: First webhook with valid signature
+        log(`  [1/4] Sending FIRST webhook...`, "info")
+
+        // Get the webhook secret from server or use a test secret
+        // For testing, we need to use a valid signature or bypass signature check
+        const payload1 = {
+          id: "evt_test_dedup_001",
+          event: "payment.captured",
+          payload: {
+            payment: {
+              entity: {
+                id: "pay_test_001",
+                order_id: "order_test_001",
+                amount: 29900,
+                status: "captured",
+                method: "card"
+              }
+            }
+          }
+        }
+
+        // For testing, we'll use a direct call to the service function
+        // This bypasses the signature check for testing
+        const res1 = await fetch(`${BASE_URL}/debug/test-webhook`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            payload: payload1,
+            skip_signature: true  // Skip signature verification for testing
+          })
+        })
+
+        const data1 = await res1.json()
+        results.push(`[1] FIRST webhook: ${data1.status} - ${data1.detail || 'processed'}`)
+
+        if (data1.status === 'ok') {
+          log(`  ✓ First webhook processed successfully`, "ok")
+        } else {
+          log(`  ❌ First webhook failed: ${data1.detail}`, "err")
+          allPassed = false
+        }
+
+        // Test 2: Duplicate webhook (same ID)
+        log(`  [2/4] Sending DUPLICATE webhook (same ID)...`, "warn")
+
+        const res2 = await fetch(`${BASE_URL}/debug/test-webhook`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            payload: payload1,  // Same payload
+            skip_signature: true
+          })
+        })
+
+        const data2 = await res2.json()
+        results.push(`[2] DUPLICATE webhook: ${data2.status} - ${data2.detail || 'processed'}`)
+
+        if (data2.detail === 'already_processed') {
+          log(`  ✅ Duplicate correctly rejected!`, "ok")
+        } else {
+          log(`  ❌ Duplicate was NOT rejected!`, "err")
+          allPassed = false
+        }
+
+        // Test 3: Different webhook (different ID)
+        log(`  [3/4] Sending DIFFERENT webhook...`, "info")
+        const payload3 = {
+          id: "evt_test_dedup_002",
+          event: "payment.captured",
+          payload: {
+            payment: {
+              entity: {
+                id: "pay_test_002",
+                order_id: "order_test_002",
+                amount: 49900,
+                status: "captured",
+                method: "card"
+              }
+            }
+          }
+        }
+
+        const res3 = await fetch(`${BASE_URL}/debug/test-webhook`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            payload: payload3,
+            skip_signature: true
+          })
+        })
+
+        const data3 = await res3.json()
+        results.push(`[3] DIFFERENT webhook: ${data3.status} - ${data3.detail || 'processed'}`)
+
+        if (data3.status === 'ok') {
+          log(`  ✓ Different webhook processed`, "ok")
+        } else {
+          log(`  ❌ Different webhook failed: ${data3.detail}`, "err")
+          allPassed = false
+        }
+
+        // Test 4: Check database for duplicates
+        log(`  [4/4] Checking for duplicates in DB...`, "info")
+        const dupCheck = await checkDuplicateEvents()
+        results.push(`[4] Duplicate check: ${dupCheck.message}`)
+
+        if (!dupCheck.hasDuplicates) {
+          log(`  ✅ No duplicates found in database!`, "ok")
+        } else {
+          log(`  ⚠️ Duplicates found: ${dupCheck.duplicateCount}`, "warn")
+          allPassed = false
+        }
+
+        // Display results
+        contentDiv.innerHTML = `
+      <div style="color: #e2e8f0; margin-bottom: 8px;">📊 Test Results:</div>
+      ${results.map(r => `<div style="padding: 2px 0;">${r}</div>`).join('')}
+      <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); color: ${allPassed ? '#4ade80' : '#f87171'};">
+        ${allPassed ? '✅ Deduplication PASSED!' : '❌ Deduplication FAILED!'}
+      </div>
+    `
+
+        if (allPassed) {
+          setStatus("✅ Webhook deduplication test PASSED!", "success")
+          statusEl.textContent = "✅ Passed"
+          statusEl.className = "scheduler-status status-badge active"
+        } else {
+          setStatus(`❌ Deduplication test FAILED! Check logs.`, "error")
+          statusEl.textContent = "❌ Failed"
+          statusEl.className = "scheduler-status status-badge expired"
+        }
+
+      } catch (err) {
+        log(`✗ Webhook test failed: ${err.message}`, "err")
+        setStatus(`Test failed: ${err.message}`, "error")
+        statusEl.textContent = "❌ Error"
+        statusEl.className = "scheduler-status status-badge expired"
+      }
+    }
+
+    async function testWebhookNoId() {
+      log(`→ Testing webhook WITHOUT ID (should be rejected)...`, "warn")
+      setStatus("Testing webhook without ID...", "info")
+
+      try {
+        const payload = {
+          event: "payment.captured",
+          payload: {
+            payment: {
+              entity: {
+                id: "pay_test_no_id",
+                order_id: "order_test_no_id",
+                amount: 29900,
+                status: "captured"
+              }
+            }
+          }
+        }
+
+        const res = await fetch(`${BASE_URL}/debug/test-webhook`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            payload: payload,
+            skip_signature: true
+          })
+        })
+
+        const data = await res.json()
+
+        if (data.status === 'error') {
+
+          log(`  ✅ Webhook correctly rejected: ${data.detail}`, "ok")
+          setStatus("✅ Webhook without ID correctly rejected!", "success")
+        } else {
+          log(`  ⚠️ Webhook without ID was accepted: ${JSON.stringify(data)}`, "warn")
+          setStatus("⚠️ Webhook without ID was accepted (should be rejected!)", "error")
+        }
+
+      } catch (err) {
+        log(`✗ Test failed: ${err.message}`, "err")
+        setStatus(`Test failed: ${err.message}`, "error")
+      }
+    }
+    async function checkDuplicateEvents() {
+      try {
+        const res = await fetch(`${BASE_URL}/debug/webhook-duplicates`)
+        const data = await res.json()
+
+        const hasDuplicates = data.duplicates_found || false
+        const duplicateCount = Object.keys(data.duplicate_events || {}).length
+
+        return {
+          hasDuplicates: hasDuplicates,
+          duplicateCount: duplicateCount,
+          message: hasDuplicates ? `Found ${duplicateCount} duplicate(s)` : "No duplicates found"
+        }
+      } catch (err) {
+        return {
+          hasDuplicates: false,
+          duplicateCount: 0,
+          message: `Check failed: ${err.message}`
+        }
+      }
+    }
+
+    async function checkWebhookDuplicates() {
+      log(`→ Checking for duplicate webhook events...`, "info")
+      setStatus("Checking for duplicates...", "info")
+
+      try {
+        const res = await fetch(`${BASE_URL}/debug/webhook-duplicates`)
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+        const data = await res.json()
+
+        const resultsDiv = document.getElementById("webhookResults")
+        resultsDiv.style.display = "block"
+        const contentDiv = document.getElementById("webhookResultContent")
+
+        let html = `<div style="color: #e2e8f0; margin-bottom: 8px;">📊 Database Status:</div>`
+        html += `<div style="padding: 2px 0;">Total Events: ${data.total_events || 0}</div>`
+        html += `<div style="padding: 2px 0;">Unique Events: ${data.unique_event_ids || 0}</div>`
+        html += `<div style="padding: 2px 0;">Duplicates: ${data.duplicates_found ? '⚠️ YES' : '✅ NO'}</div>`
+
+        if (data.duplicates_found) {
+          html += `<div style="padding: 2px 0; color: #f87171;">Duplicate IDs: ${JSON.stringify(data.duplicate_events)}</div>`
+        }
+
+        if (data.recent_events && data.recent_events.length > 0) {
+          html += `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); color: #94a3b8; font-size: 12px;">Recent Events:</div>`
+          data.recent_events.slice(0, 5).forEach(e => {
+            html += `<div style="padding: 2px 0; font-size: 12px;">${e.razorpay_event_id} (${e.event_type}) - ${e.processed ? '✅' : '⏳'}</div>`
+          })
+        }
+
+        contentDiv.innerHTML = html
+
+        if (data.duplicates_found) {
+          setStatus(`⚠️ ${Object.keys(data.duplicate_events).length} duplicate(s) found!`, "error")
+        } else {
+          setStatus("✅ No duplicates found in database!", "success")
+        }
+
+      } catch (err) {
+        log(`✗ Check failed: ${err.message}`, "err")
+        setStatus(`Failed to check duplicates: ${err.message}`, "error")
+      }
+    }
+
+    async function clearWebhookEvents() {
+      if (!confirm("Delete all test webhook events from database?")) return
+
+      log(`→ Clearing test webhook events...`, "warn")
+
+      try {
+        const res = await fetch(`${BASE_URL}/debug/webhook-cleanup`, {
+          method: "DELETE"
+        })
+
+        const data = await res.json()
+
+        if (data.success) {
+          log(`✓ Cleared ${data.deleted_count} test events`, "ok")
+          setStatus(`Cleared ${data.deleted_count} test events`, "success")
+
+          document.getElementById("webhookResults").style.display = "none"
+        } else {
+          throw new Error(data.message || "Cleanup failed")
+        }
+
+      } catch (err) {
+        log(`✗ Cleanup failed: ${err.message}`, "err")
+        setStatus(`Cleanup failed: ${err.message}`, "error")
+      }
+    }
+
+    async function viewWebhookLogs() {
+      log(`→ Fetching webhook logs...`, "info")
+
+      try {
+        const res = await fetch(`${BASE_URL}/debug/webhook-logs`)
+        const data = await res.json()
+
+        const resultsDiv = document.getElementById("webhookResults")
+        resultsDiv.style.display = "block"
+        const contentDiv = document.getElementById("webhookResultContent")
+
+        if (data.events && data.events.length > 0) {
+          let html = `<div style="color: #e2e8f0; margin-bottom: 8px;">📋 Last ${data.events.length} Webhooks:</div>`
+          data.events.forEach(e => {
+            const status = e.processed ? '✅' : '⏳'
+            html += `<div style="padding: 2px 0; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.02);">
+          ${status} ${e.razorpay_event_id} (${e.event_type}) - ${new Date(e.created_at).toLocaleTimeString()}
+          ${e.error ? `<span style="color: #f87171;">❌ ${e.error}</span>` : ''}
+        </div>`
+          })
+          contentDiv.innerHTML = html
+        } else {
+          contentDiv.innerHTML = `<div style="color: #475569;">No webhook events found</div>`
+        }
+
+        setStatus(`Found ${data.events ? data.events.length : 0} webhook events`, "info")
+
+      } catch (err) {
+        log(`✗ Failed to fetch logs: ${err.message}`, "err")
+        setStatus(`Failed to fetch logs: ${err.message}`, "error")
+      }
+    }
+
+    // Add this endpoint to your backend routes
+    // Add these debug endpoints to your payment_route.py:
+
+    /*
+    
+    */
+
+    // ============================================================
+    // LOAD SUBSCRIPTION
+    // ============================================================
+
+    async function loadSubscription() {
+      const userId = document.getElementById("userId").value.trim()
+      if (!userId) {
+        setStatus("Please enter a User ID", "error")
+        return
+      }
+
+      log(`→ Loading subscription for user: ${userId}`, "info")
+      document.getElementById("subscriptionCard").style.display = "none"
+      document.getElementById("noSubscription").style.display = "none"
+
+      try {
+        const res = await fetch(`${BASE_URL}/recurring/subscription/${userId}`)
+
+        if (res.status === 404) {
+          log(`ℹ️ No subscription found for user: ${userId}`, "warn")
+          document.getElementById("noSubscription").style.display = "block"
+          setStatus("No active subscription found. Select a plan to get started.", "info")
+          return
+        }
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`)
+        }
+
+        const data = await res.json()
+        currentSubscription = data.subscription
+
+        // console.log("Loaded subscription:", currentSubscription)
+
+        // Update UI
+        document.getElementById("subscriptionCard").style.display = "block"
+        document.getElementById("noSubscription").style.display = "none"
+
+        // Populate subscription details
+        document.getElementById("subPlanName").textContent = currentSubscription.plan_id || "N/A"
+        document.getElementById("subId").textContent = currentSubscription.subscription_id || ""
+
+        // Status badge
+        const statusBadge = document.getElementById("subStatusBadge")
+        const status = currentSubscription.status || "unknown"
+        statusBadge.textContent = status.charAt(0).toUpperCase() + status.slice(1)
+        statusBadge.className = `status-badge ${status}`
+
+        // Price
+        const pricePaise = currentSubscription.price_paise_at_purchase || 0
+        document.getElementById("subPrice").textContent = `₹${pricePaise / 100}/month`
+
+        // Dates
+        const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('en-IN') : '—'
+        document.getElementById("subStartDate").textContent = formatDate(currentSubscription.start_date)
+        document.getElementById("subEndDate").textContent = formatDate(currentSubscription.end_date)
+        document.getElementById("subNextBilling").textContent = formatDate(currentSubscription.next_billing_date)
+
+        // Last payment status
+        const lastPayment = currentSubscription.last_payment_status || '—'
+        const lastPaymentEl = document.getElementById("subLastPayment")
+        lastPaymentEl.textContent = lastPayment.charAt(0).toUpperCase() + lastPayment.slice(1)
+        lastPaymentEl.className = 'value' + (lastPayment === 'failed' ? ' danger' : lastPayment === 'success' ? ' success' : '')
+
+        // Highlight current plan in card
+        document.querySelectorAll(".plan-card").forEach(card => {
+          card.classList.remove("current-plan")
+          card.classList.remove("disabled")
+          const badge = card.querySelector(".current-plan-badge")
+          if (badge) badge.remove()
+        })
+
+        // Mark current plan
+        document.querySelectorAll(".plan-card").forEach(card => {
+          if (card.dataset.planId === currentSubscription.plan_id) {
+            const badge = document.createElement("span")
+            badge.className = "current-plan-badge"
+            badge.textContent = "✓ Current"
+            card.appendChild(badge)
+            card.classList.add("disabled")
+            card.style.cursor = "default"
+          }
+        })
+
+        log(`✓ Loaded subscription: ${currentSubscription.subscription_id} (${currentSubscription.status})`, "ok")
+        setStatus(`Subscription loaded successfully. Plan: ${currentSubscription.plan_id}`, "success")
+
+      } catch (err) {
+        log(`✗ Failed to load subscription: ${err.message}`, "err")
+        setStatus(`Error loading subscription: ${err.message}`, "error")
+      }
+    }
+
+    // ============================================================
+    // PLAN SELECTION
+    // ============================================================
+
+    function selectPlan(card) {
+      if (card.classList.contains("disabled")) {
+        setStatus("This is your current plan. Select a different plan to upgrade.", "info")
+        return
+      }
+
+      document.querySelectorAll(".plan-card").forEach(c => c.classList.remove("selected"))
+      card.classList.add("selected")
+
+      selectedPlan = {
+        plan_id: card.dataset.planId,
+        amount: parseInt(card.dataset.amount),
+        name: card.querySelector(".plan-name").textContent
+      }
+
+      const btn = document.getElementById("payBtn")
+      btn.disabled = false
+      btn.querySelector(".btn-text").textContent = `Pay ₹${selectedPlan.amount / 100} — ${selectedPlan.name}`
+      document.getElementById("statusBox").style.display = "none"
+    }
+
+    // ============================================================
+    // RENEW SUBSCRIPTION
+    // ============================================================
+
+    async function renewSubscription() {
+      if (!currentSubscription) {
+        setStatus("Please load your subscription first", "error")
+        return
+      }
+
+      log(`→ Processing renewal for subscription: ${currentSubscription.subscription_id}`, "info")
+      setStatus("Processing renewal...", "info")
+
+      try {
+        const res = await fetch(`${BASE_URL}/recurring/process-renewals`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        })
+
+        const data = await res.json()
+
+        if (data.success) {
+          log(`✓ Renewal processed: ${data.message}`, "ok")
+          setStatus(`Renewal processed: ${data.message}`, "success")
+          setTimeout(loadSubscription, 2000)
+        } else {
+          throw new Error(data.message || "Renewal failed")
+        }
+
+      } catch (err) {
+        log(`✗ Renewal failed: ${err.message}`, "err")
+        setStatus(`Renewal failed: ${err.message}`, "error")
+      }
+    }
+
+    // ============================================================
+    // CANCEL SUBSCRIPTION
+    // ============================================================
+
+    async function cancelSubscription() {
+      if (!currentSubscription) {
+        setStatus("Please load your subscription first", "error")
+        return
+      }
+
+      if (!confirm(`Are you sure you want to cancel your subscription?`)) {
+        return
+      }
+
+      log(`→ Cancelling subscription: ${currentSubscription.subscription_id}`, "warn")
+
+      try {
+        const res = await fetch(`${BASE_URL}/recurring/subscription/cancel/${currentSubscription.subscription_id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        })
+
+        const data = await res.json()
+
+        if (data.success) {
+          log(`✓ Subscription cancelled: ${data.message}`, "ok")
+          setStatus("Subscription cancelled successfully.", "success")
+          setTimeout(loadSubscription, 1000)
+        } else {
+          throw new Error(data.message || "Cancellation failed")
+        }
+
+      } catch (err) {
+        log(`✗ Cancellation failed: ${err.message}`, "err")
+        setStatus(`Cancellation failed: ${err.message}`, "error")
+      }
+    }
+
+    // ============================================================
+    // PAYMENT FLOW
+    // ============================================================
+
+    async function startPayment() {
+      const userId = document.getElementById("userId").value.trim()
+      if (!userId) {
+        setStatus("Please enter a User ID", "error")
+        return
+      }
+      if (!selectedPlan) {
+        setStatus("Please select a plan", "error")
+        return
+      }
+
+      const btn = document.getElementById("payBtn")
+      btn.disabled = true
+      btn.classList.add("loading")
+      btn.querySelector(".btn-text").textContent = "Creating order..."
+      hideStatus()
+
+      log(`→ Creating order for user: ${userId} | plan: ${selectedPlan.plan_id}`)
+
+      let orderData
+      try {
+        const res = await fetch(`${BASE_URL}/payment/create-order`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: userId,
+            plan_id: selectedPlan.plan_id
+          })
+        })
+
+        orderData = await res.json()
+
+        if (!res.ok) {
+          log(`✗ Order creation failed: ${JSON.stringify(orderData)}`, "err")
+          setStatus(`Order creation failed: ${orderData.detail || "Unknown error"}`, "error")
+          btn.disabled = false
+          btn.classList.remove("loading")
+          btn.querySelector(".btn-text").textContent = `Pay ₹${selectedPlan.amount / 100} — ${selectedPlan.name}`
+          return
+        }
+
+        log(`✓ Order created: ${orderData.order_id} | amount: ₹${orderData.amount_paise / 100}`, "ok")
+        if (orderData.cached) {
+          log(`ℹ️ Cached response (idempotent request)`, "warn")
+        }
+
+      } catch (err) {
+        log(`✗ Network error: ${err.message}`, "err")
+        setStatus("Could not reach backend. Is it running on localhost:8000?", "error")
+        btn.disabled = false
+        btn.classList.remove("loading")
+        btn.querySelector(".btn-text").textContent = `Pay ₹${selectedPlan.amount / 100} — ${selectedPlan.name}`
+        return
+      }
+
+      log(`→ Opening Razorpay Checkout...`, "info")
+
+      const options = {
+        key: orderData.key_id || RAZORPAY_KEY,
+        amount: orderData.amount_paise,
+        currency: orderData.currency || "INR",
+        name: "RubixKube",
+        description: `${selectedPlan.name} Plan — Monthly`,
+        order_id: orderData.order_id,
+
+        handler: async function (response) {
+          log(`→ Payment done. Verifying signature...`, "info")
+          log(`  payment_id: ${response.razorpay_payment_id}`, "info")
+          log(`  order_id: ${response.razorpay_order_id}`, "info")
+
+          try {
+            const verifyRes = await fetch(`${BASE_URL}/payment/verify`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            })
+
+            const verifyData = await verifyRes.json()
+
+            if (!verifyRes.ok) {
+              log(`✗ Signature verification failed: ${JSON.stringify(verifyData)}`, "err")
+              setStatus("Signature verification failed. Please contact support.", "error")
+              btn.disabled = false
+              btn.classList.remove("loading")
+              btn.querySelector(".btn-text").textContent = `Pay ₹${selectedPlan.amount / 100} — ${selectedPlan.name}`
+              return
+            }
+
+            log(`✓ Signature verified successfully!`, "ok")
+            log(`✓ Payment ID: ${verifyData.payment_id || "N/A"}`, "ok")
+            setStatus(
+              "✅ Payment successful! Your subscription will be activated once the webhook confirms it.",
+              "success"
+            )
+
+            setTimeout(loadSubscription, 3000)
+
+          } catch (err) {
+            log(`✗ Verify network error: ${err.message}`, "err")
+            setStatus("Verification call failed. Check backend logs.", "error")
+          }
+
+          btn.disabled = false
+          btn.classList.remove("loading")
+          btn.querySelector(".btn-text").textContent = `Pay ₹${selectedPlan.amount / 100} — ${selectedPlan.name}`
+        },
+
+        modal: {
+          ondismiss: function () {
+            log(`✗ Checkout closed by user`, "warn")
+            setStatus("Payment cancelled.", "error")
+            btn.disabled = false
+            btn.classList.remove("loading")
+            btn.querySelector(".btn-text").textContent = `Pay ₹${selectedPlan.amount / 100} — ${selectedPlan.name}`
+          }
+        },
+
+        prefill: {
+          name: "Test User",
+          email: "test@gmail.com",
+          contact: "9999999999"
+        },
+
+        theme: { color: "#7c3aed" }
+      }
+
+      const rzp = new Razorpay(options)
+
+      rzp.on("payment.failed", function (response) {
+        log(`✗ Payment failed: ${response.error.description}`, "err")
+        setStatus(`Payment failed: ${response.error.description}`, "error")
+        btn.disabled = false
+        btn.classList.remove("loading")
+        btn.querySelector(".btn-text").textContent = `Pay ₹${selectedPlan.amount / 100} — ${selectedPlan.name}`
+      })
+
+      rzp.open()
+    }
+
+    // ============================================================
+    // SCHEDULER FUNCTIONS
+    // ============================================================
+
+    async function loadSchedulerStatus() {
+      log(`→ Loading scheduler status...`, "info")
+
+      try {
+        // Get status
+        const statusRes = await fetch(`${BASE_URL}/scheduler/status`)
+        const statusData = await statusRes.json()
+
+        // Update status badge
+        const statusBadge = document.getElementById("schedulerStatus")
+        if (statusData.running) {
+          statusBadge.textContent = "Running"
+          statusBadge.className = "scheduler-status status-badge active"
+        } else {
+          statusBadge.textContent = "Stopped"
+          statusBadge.className = "scheduler-status status-badge expired"
+        }
+
+        // Get jobs
+        const jobsRes = await fetch(`${BASE_URL}/scheduler/jobs`)
+        const jobsData = await jobsRes.json()
+
+        // Update jobs list
+        const jobsContainer = document.getElementById("schedulerJobs")
+        if (jobsData.success && jobsData.jobs.length > 0) {
+          jobsContainer.innerHTML = jobsData.jobs.map(job => `
+        <div class="job-item">
+          <span class="job-name">${job.id}</span>
+          <span class="job-time">Next: ${job.next_run_time || 'Not scheduled'}</span>
+          <span class="job-status active">●</span>
+        </div>
+      `).join('')
+        } else {
+          jobsContainer.innerHTML = `
+        <div class="job-item">
+          <span class="job-name" style="color: #475569;">No jobs scheduled</span>
+        </div>
+      `
+        }
+
+        log(`✓ Scheduler status loaded`, "ok")
+
+      } catch (err) {
+        log(`✗ Failed to load scheduler status: ${err.message}`, "err")
+      }
+    }
+
+    async function triggerRenewals() {
+      log(`→ Triggering renewals...`, "info")
+      setStatus("Triggering renewals...", "info")
+
+      try {
+        const res = await fetch(`${BASE_URL}/scheduler/trigger/renewals`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        })
+
+        const data = await res.json()
+
+        if (data.success) {
+          log(`✓ Renewals triggered: ${data.message}`, "ok")
+          setStatus(`Renewals triggered successfully`, "success")
+          setTimeout(loadSchedulerStatus, 2000)
+        } else {
+          throw new Error(data.message || "Trigger failed")
+        }
+
+      } catch (err) {
+        log(`✗ Trigger failed: ${err.message}`, "err")
+        setStatus(`Failed to trigger renewals: ${err.message}`, "error")
+      }
+    }
+
+    async function triggerExpiry() {
+      log(`→ Triggering expiry check...`, "info")
+      setStatus("Checking expired subscriptions...", "info")
+
+      try {
+        const res = await fetch(`${BASE_URL}/scheduler/trigger/expiry`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        })
+
+        const data = await res.json()
+
+        if (data.success) {
+          log(`✓ Expiry check triggered: ${data.message}`, "ok")
+          setStatus(`Expiry check completed`, "success")
+          setTimeout(loadSchedulerStatus, 2000)
+        } else {
+          throw new Error(data.message || "Trigger failed")
+        }
+
+      } catch (err) {
+        log(`✗ Trigger failed: ${err.message}`, "err")
+        setStatus(`Failed to check expiry: ${err.message}`, "error")
+      }
+    }
+
+    async function triggerReminders() {
+      log(`→ Sending reminders...`, "info")
+      setStatus("Sending expiry reminders...", "info")
+
+      try {
+        const res = await fetch(`${BASE_URL}/scheduler/trigger/reminders`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        })
+
+        const data = await res.json()
+
+        if (data.success) {
+          log(`✓ Reminders sent: ${data.message}`, "ok")
+          setStatus(`Reminders sent successfully`, "success")
+          setTimeout(loadSchedulerStatus, 2000)
+        } else {
+          throw new Error(data.message || "Trigger failed")
+        }
+
+      } catch (err) {
+        log(`✗ Trigger failed: ${err.message}`, "err")
+        setStatus(`Failed to send reminders: ${err.message}`, "error")
+      }
+    }
+
+    async function pauseScheduler() {
+      log(`→ Pausing scheduler...`, "warn")
+
+      try {
+        const res = await fetch(`${BASE_URL}/scheduler/pause`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        })
+
+        const data = await res.json()
+
+        if (data.success) {
+          log(`✓ Scheduler paused`, "ok")
+          setStatus("Scheduler paused", "info")
+          loadSchedulerStatus()
+        } else {
+          throw new Error(data.message || "Pause failed")
+        }
+
+      } catch (err) {
+        log(`✗ Pause failed: ${err.message}`, "err")
+        setStatus(`Failed to pause scheduler: ${err.message}`, "error")
+      }
+    }
+
+    async function resumeScheduler() {
+      log(`→ Resuming scheduler...`, "info")
+
+      try {
+        const res = await fetch(`${BASE_URL}/scheduler/resume`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        })
+
+        const data = await res.json()
+
+        if (data.success) {
+          log(`✓ Scheduler resumed`, "ok")
+          setStatus("Scheduler resumed", "success")
+          loadSchedulerStatus()
+        } else {
+          throw new Error(data.message || "Resume failed")
+        }
+
+      } catch (err) {
+        log(`✗ Resume failed: ${err.message}`, "err")
+        setStatus(`Failed to resume scheduler: ${err.message}`, "error")
+      }
+    }
+
+    // ============================================================
+    // UTILITY FUNCTIONS
+    // ============================================================
+
+    function log(msg, type = "info") {
+      const box = document.getElementById("log")
+      const cls = type === "ok" ? "log-ok" : type === "err" ? "log-err" : type === "warn" ? "log-warn" : "log-info"
+      const time = new Date().toLocaleTimeString()
+      box.innerHTML += `<span class="${cls}">[${time}] ${msg}</span><br/>`
+      box.scrollTop = box.scrollHeight
+    }
+
+    function clearLog() {
+      document.getElementById("log").innerHTML = "▶️ Log cleared.<br/>"
+    }
+
+    function setStatus(msg, type) {
+      const box = document.getElementById("statusBox")
+      box.className = `status ${type}`
+      const icons = { success: "✅", error: "❌", info: "ℹ️" }
+      box.innerHTML = `<span class="status-icon">${icons[type] || ""}</span> ${msg}`
+      box.style.display = "block"
+    }
+
+    function hideStatus() {
+      document.getElementById("statusBox").style.display = "none"
+    }
+
+    document.getElementById("userId").addEventListener("input", function () {
+      document.getElementById("displayUserId").textContent = this.value || "guest"
+    })
+
+    document.getElementById("userId").addEventListener("keyup", function (e) {
+      if (e.key === "Enter") {
+        loadSubscription()
+      }
+    })
+
+    window.onload = function () {
+      setTimeout(loadSubscription, 500)
+      setTimeout(loadSchedulerStatus, 1000)
+    }
+  </script>
+</body>
+
+</html>
